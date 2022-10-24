@@ -23,6 +23,9 @@ public class CourseFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String path = httpServletRequest.getServletPath();
         String courseId = (String) httpServletRequest.getSession().getAttribute("selectedCourse");
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         if((Objects.equals(httpServletRequest.getMethod(), "POST") && "/addStudent".equals(path)) ||
             "/listCourses".equals(path) || courseId!=null)
         {

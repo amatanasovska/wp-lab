@@ -1,18 +1,21 @@
 package mk.ukim.finki.wp.lab.service.impl;
 
+import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
 import mk.ukim.finki.wp.lab.model.exceptions.EmptyFieldsException;
 import mk.ukim.finki.wp.lab.model.exceptions.UsernameAlreadyTakenException;
 import mk.ukim.finki.wp.lab.repository.StudentRepository;
+import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
-
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
@@ -41,4 +44,6 @@ public class StudentServiceImpl implements StudentService {
     public Student searchByUsername(String username) {
         return studentRepository.findByUsername(username);
     }
+
+
 }

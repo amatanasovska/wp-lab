@@ -9,8 +9,18 @@
 <header>
     <h1>Students in Course </h1>
 </header>
-
+<form th:action="@{/StudentEnrollmentSummary}">
+<select name="dropDownCourse" id="dropDownCourse">
+    <div th:each="c : ${courses}">
+    <option th:value="${c.getCourseId()}"><span th:text="${c.getName()}"></span></option>
+    </div>
+</select>
+    <input type="submit" value="Submit">
+</form>
 <section>
+    <div th:if="${error!=null}" th:text="${error}">
+
+    </div>
     <div th:text="${course.getName()}"></div>
     <ul th:each="student : ${course.getStudents()}">
         <li><span th:text="${student.getName()}"></span> (<span th:text="${student.getUsername()}"></span>)</li>

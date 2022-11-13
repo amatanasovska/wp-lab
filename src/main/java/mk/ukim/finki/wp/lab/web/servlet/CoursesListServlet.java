@@ -23,7 +23,17 @@ public class CoursesListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         WebContext context = new WebContext(request,response, request.getServletContext());
         context.setVariable("courses", courseService.listAll());
+        String req_err = request.getParameter("error");
+        if(req_err!=null)
+        {
+            context.setVariable("error",req_err);
+            context.setVariable("hasError",true);
+        }
+        else
+        {
+            context.setVariable("hasError",false);
 
+        }
         springTemplateEngine.process("listCourses.html",context,response.getWriter());
 
     }

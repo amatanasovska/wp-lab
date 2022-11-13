@@ -26,8 +26,9 @@ public class CourseFilter implements Filter {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
         if((Objects.equals(httpServletRequest.getMethod(), "POST") && "/addStudent".equals(path)) ||
-            "/listCourses".equals(path) || courseId!=null)
+            "/listCourses".equals(path) || courseId!=null || path.contains("/courses"))
         {
             chain.doFilter(request, response);
         }

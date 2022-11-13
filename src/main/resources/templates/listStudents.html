@@ -41,7 +41,7 @@
     <br/>
 
     <input type="submit" value="Submit">
-        <div th:if="${error}" th:text="${error_message}">
+        <div th:if="${hasError}" th:text="${error}">
 
         </div>
     </form>

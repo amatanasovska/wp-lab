@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.repository;
 
 import mk.ukim.finki.wp.lab.bootstrap.DataHolder;
 import mk.ukim.finki.wp.lab.model.Student;
+import mk.ukim.finki.wp.lab.model.exceptions.InvalidStudentUsernameException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

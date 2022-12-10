@@ -6,6 +6,9 @@
 </head>
 <body>
 <h1>Course</h1>
+<div class="text-bg-danger" th:if='${hasError}' th:text="${error}">
+
+</div>
 <form method="post" th:action="@{/courses/add}">
 <label for="name">Name</label>
 <input id="name" name="name" type = "text" th:value="${course!=null? course.getName() : ''}">

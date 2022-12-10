@@ -1,15 +1,14 @@
-package mk.ukim.finki.wp.lab.repository;
+package mk.ukim.finki.wp.lab.repository.old_impl;
 
 import mk.ukim.finki.wp.lab.bootstrap.DataHolder;
 import mk.ukim.finki.wp.lab.model.Teacher;
 import mk.ukim.finki.wp.lab.model.exceptions.InvalidTeacherIdException;
 import org.springframework.stereotype.Repository;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 @Repository
-public class TeacherRepository {
+public class InMemoryTeacherRepository {
     public List<Teacher> findAll(){
         return DataHolder.teachers;
     }

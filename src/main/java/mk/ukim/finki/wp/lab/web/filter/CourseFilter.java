@@ -34,7 +34,7 @@ public class CourseFilter implements Filter {
         }
         else
         {
-            httpServletResponse.sendRedirect("/listCourses");
+            httpServletResponse.sendRedirect("/courses");
         }
 
     }

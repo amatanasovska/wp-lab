@@ -18,6 +18,7 @@
 <header>
     <h1>Courses List</h1>
 </header>
+    <div>Best teacher: <span th:text="${bestTeacher!=null?bestTeacher+'('+bestTeacherClasses+')':'No teacher'}"></span></div>
 <main>
     <div class="text-bg-danger" th:if='${hasError}' th:text="${error}">
 
@@ -57,7 +58,7 @@
         </table>
         <input type="submit" value="Submit">
     </form>
-    <a class="btn btn-secondary" th:href="@{'/courses/newCourse'}"> Add new course</a>
+    <a class="btn btn-secondary" th:href="@{'/courses/add-form'}"> Add new course</a>
 </main>
 </div>
 </body>

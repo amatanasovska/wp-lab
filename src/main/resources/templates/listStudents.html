@@ -39,7 +39,10 @@
         <input type="radio" name="size" th:value="${student.getUsername()}"> <span th:text="${student.getName()}"></span>
     </div>
     <br/>
-
+    <div>
+        <label for="grade">Enter grade</label>
+        <input type="text" maxlength="1" id="grade" name="grade" >
+    </div>
     <input type="submit" value="Submit">
         <div th:if="${hasError}" th:text="${error}">
 

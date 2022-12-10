@@ -1,39 +1,45 @@
 package mk.ukim.finki.wp.lab.service.impl;
 
 import mk.ukim.finki.wp.lab.model.Course;
+import mk.ukim.finki.wp.lab.model.Grade;
 import mk.ukim.finki.wp.lab.model.Student;
-import mk.ukim.finki.wp.lab.model.exceptions.CourseAlreadyExistsException;
+import mk.ukim.finki.wp.lab.model.Teacher;
 import mk.ukim.finki.wp.lab.model.exceptions.EmptyFieldsException;
 import mk.ukim.finki.wp.lab.model.exceptions.InvalidCourseIdException;
 import mk.ukim.finki.wp.lab.model.exceptions.InvalidStudentUsernameException;
-import mk.ukim.finki.wp.lab.repository.CourseRepository;
+import mk.ukim.finki.wp.lab.repository.jpa.CourseRepository;
+import mk.ukim.finki.wp.lab.repository.jpa.TeacherRepository;
 import mk.ukim.finki.wp.lab.service.CourseService;
+import mk.ukim.finki.wp.lab.service.GradeService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
+    private final TeacherRepository teacherRepository;
+    private final GradeService gradeService;
     private final StudentService studentService;
-    public CourseServiceImpl(CourseRepository courseRepository, StudentService studentService) {
+    public CourseServiceImpl(CourseRepository courseRepository, TeacherRepository teacherRepository, GradeService gradeService, StudentService studentService) {
         this.courseRepository = courseRepository;
+        this.teacherRepository = teacherRepository;
+        this.gradeService = gradeService;
         this.studentService = studentService;
     }
 
     @Override
     public List<Student> listStudentsByCourse(Long courseId) {
-        return courseRepository.findAllStudentsByCourse(courseId);
+        return courseRepository.findById(courseId).get().getStudents();
     }
 
     @Override
     public Course addStudentInCourse(String username, Long courseId) {
-        Course course =courseRepository.findById(courseId);
+        Course course =courseRepository.findById(courseId).orElse(null);
         Student student = studentService.searchByUsername(username);
-        if(username==null || courseId==null)
+        if(username == null)
             throw new EmptyFieldsException();
         else if(username.equals("") || student==null)
             throw new InvalidStudentUsernameException();
@@ -41,15 +47,18 @@ public class CourseServiceImpl implements CourseService {
             throw new InvalidCourseIdException();
         else if(course.getStudents().stream()
                 .filter(x->x.getUsername().equals(username)).findFirst()
-                .orElse(null)==null)
-            return courseRepository.addStudentToCourse(student,course);
-
+                .orElse(null)==null) {
+            List<Student> students = course.getStudents();
+            students.add(student);
+            course.setStudents(students);
+            return courseRepository.save(course);
+        }
         return course;
     }
 
     @Override
     public List<Course> listAll() {
-        return courseRepository.findAllCourses();
+        return courseRepository.findAll();
     }
     @Override
     public List<Student> studentsNotInCourse(Long courseId)
@@ -68,20 +77,68 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Optional<Course> saveCourse(Long courseId, String name, String description, Long id) {
 
-        if(courseRepository.findById(courseId)!=null)
-            return courseRepository.save(courseId,name,description,id);
-        else if(courseId==-1)
-            return courseRepository.save(null,name,description,id);
-        throw new CourseAlreadyExistsException(name);
+        Course course = courseRepository.findById(courseId).orElse(null);
+        Teacher teacher = teacherRepository.findById(id).orElse(null);
+        if(course!=null)
+        {
+            course.setName(name);
+            course.setDescription(description);
+            course.setTeacher(teacher);
+        }
+        else
+        {
+            course = new Course(name,description,new ArrayList<>(),teacher);
+        }
+        return Optional.of(courseRepository.save(course));
+
+//        if(courseRepository.findById(courseId).isPresent())
+//            return courseRepository.save(courseId,name,description,id);
+//        else if(courseId==-1)
+//            return courseRepository.save((long) -1,name,description,id);
+//        throw new InvalidCourseIdException();
     }
 
     @Override
-    public boolean removeCourse(Long id) {
-        return courseRepository.deleteCourse(id);
+    public void removeCourse(Long id) {
+        Course course = courseRepository.findById(id).orElseThrow(InvalidCourseIdException::new);
+        List<Grade> grades = gradeService.findAll();
+        gradeService.deleteAll(grades.stream().filter(x->x.getCourse().equals(course)).collect(Collectors.toList()));
+
+//        course.getStudents().removeAll(course.getStudents());
+//        courseRepository.save(course);
+        courseRepository.delete(course);
     }
 
     @Override
     public List<Course> listAllSorted() {
         return listAll().stream().sorted().collect(Collectors.toList());
+    }
+
+    @Override
+    public Map.Entry<Teacher,Integer> getBestTeacher() {
+        Map<Teacher,Integer> teacherIntegerMap = new HashMap<>();
+
+        for(Course course:courseRepository.findAll())
+        {
+            if(course.getTeacher()!=null)
+            {
+                Integer t = teacherIntegerMap.getOrDefault(course.getTeacher(),0);
+                t+=1;
+                teacherIntegerMap.put(course.getTeacher(),t);
+            }
+
+        }
+        List<Map.Entry<Teacher,Integer>> sorted = teacherIntegerMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect(Collectors.toList());
+        if(sorted.size()>0)
+            return sorted.get(0);
+        return null;
+    }
+
+    @Override
+    public List<Character> getStudentsGrades(Long courseId) {
+        Course course = findById(courseId);
+        List<Student> students = course.getStudents();
+        return students.stream().map(x->gradeService.findStudentGradeInCourse(x,course)).collect(Collectors.toList());
     }
 }

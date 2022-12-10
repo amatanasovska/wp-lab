@@ -2,8 +2,10 @@ package mk.ukim.finki.wp.lab.service;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
+import mk.ukim.finki.wp.lab.model.Teacher;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface CourseService{
@@ -15,8 +17,9 @@ public interface CourseService{
 
     Optional<Course> saveCourse(Long courseId, String name, String description, Long id);
 
-    boolean removeCourse(Long id);
+    void removeCourse(Long id);
 
     List<Course> listAllSorted();
-
+    Map.Entry<Teacher,Integer> getBestTeacher();
+    List<Character> getStudentsGrades(Long courseId);
 }

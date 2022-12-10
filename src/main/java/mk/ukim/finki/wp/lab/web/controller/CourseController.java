@@ -2,10 +2,10 @@ package mk.ukim.finki.wp.lab.web.controller;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Teacher;
-import mk.ukim.finki.wp.lab.model.exceptions.CourseAlreadyExistsException;
-import mk.ukim.finki.wp.lab.model.exceptions.InvalidCourseIdException;
+import mk.ukim.finki.wp.lab.model.exceptions.*;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.TeacherService;
+import org.apache.xpath.operations.Mod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +29,10 @@ public class CourseController {
     public String getCoursesPage(@RequestParam(required = false) String error, Model model)
     {
         model.addAttribute("courses",courseService.listAllSorted());
+        if(courseService.getBestTeacher()!=null) {
+            model.addAttribute("bestTeacher", courseService.getBestTeacher().getKey().getName());
+            model.addAttribute("bestTeacherClasses", courseService.getBestTeacher().getValue());
+        }
         if(error!=null)
         {
             model.addAttribute("hasError",true);
@@ -45,17 +49,23 @@ public class CourseController {
     public String saveCourse(@RequestParam(required = false) Long courseId,
                              @RequestParam String name,
                              @RequestParam String description,
-                             @RequestParam Long id)
+                             @RequestParam Long id,@RequestParam(required = false) String error, Model model)
     {
+
         try{
             courseService.saveCourse(courseId,name,description,id);
-
+            System.out.println("Saved");
             return "redirect:/courses";
         }
-        catch (CourseAlreadyExistsException exception)
+        catch (CourseAlreadyExistsException | EmptyFieldsOnExistingCourseException exception)
         {
-            return "redirect:/edit-form/"+id+"?error="+exception.getMessage();
+            return "redirect:/courses/edit-form/"+courseId+"?error="+exception.getMessage();
         }
+        catch (CourseAddingErrorNameExists | EmptyFieldsException exception)
+        {
+            return "redirect:/courses/add-form?error=" + exception.getMessage();
+        }
+
 
     }
     @DeleteMapping("/delete/{id}")
@@ -70,8 +80,17 @@ public class CourseController {
     }
 
     @GetMapping("/edit-form/{id}")
-    public String getEditCoursePage(@PathVariable Long id, Model model)
+    public String getEditCoursePage(@PathVariable Long id,@RequestParam(required = false) String error, Model model)
     {
+        if(error!=null)
+        {
+            model.addAttribute("hasError",true);
+            model.addAttribute("error",error);
+        }
+        else
+        {
+            model.addAttribute("hasError",false);
+        }
         try{
                 Course course = courseService.findById(id);
                 model.addAttribute("course", course);
@@ -86,9 +105,18 @@ public class CourseController {
         }
 
     }
-    @GetMapping("/newCourse")
-    public String addNewCourse(Model model)
+    @GetMapping("/add-form")
+    public String addNewCourse(Model model,@RequestParam(required = false) String error)
     {
+        if(error!=null)
+        {
+            model.addAttribute("hasError",true);
+            model.addAttribute("error",error);
+        }
+        else
+        {
+            model.addAttribute("hasError",false);
+        }
         model.addAttribute("teachers", teacherService.findAll());
 
         return "add-course.html";

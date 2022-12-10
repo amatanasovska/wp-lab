@@ -22,10 +22,10 @@
 
     </div>
     <div th:text="${course.getName()}"></div>
-    <ul th:each="student : ${course.getStudents()}">
-        <li><span th:text="${student.getName()}"></span> (<span th:text="${student.getUsername()}"></span>)</li>
+    <ul th:each="student,iterStat : ${course.getStudents()}">
+        <li><span th:text="${student.getName()}"></span> (<span th:text="${student.getUsername()}"></span>) - Grade <span th:text="${grades.get(iterStat.index)}"></span></li>
     </ul>
-    <a href="/listCourses">Back</a>
+    <a href="/courses">Back</a>
 </section>
 
 </body>

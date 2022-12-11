@@ -7,6 +7,7 @@ import mk.ukim.finki.wp.lab.repository.jpa.GradeRepository;
 import mk.ukim.finki.wp.lab.service.GradeService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,13 +20,13 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public void save(Character grade, Student student, Course course) {
-        gradeRepository.save(new Grade(grade,student,course));
+    public void save(Character grade, Student student, Course course, LocalDateTime timestamp) {
+        gradeRepository.save(new Grade(grade,student,course,timestamp));
     }
 
     @Override
-    public Character findStudentGradeInCourse(Student student, Course course) {
-        return gradeRepository.findGradeByStudentAndCourse(student,course).getGrade();
+    public Grade findStudentGradeInCourse(Student student, Course course) {
+        return gradeRepository.findGradeByStudentAndCourse(student,course);
     }
 
     @Override

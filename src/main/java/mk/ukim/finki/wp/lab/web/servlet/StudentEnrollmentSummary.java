@@ -15,8 +15,9 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
-@WebServlet(name = "StudentEnrollmentSummary", value = "/StudentEnrollmentSummary")
+@WebServlet(name = "StudentEnrollmentSummary", value = "/StudentEnrollmentSummaryServlet")
 public class StudentEnrollmentSummary extends HttpServlet {
     private final StudentService studentService;
     private final CourseService courseService;
@@ -76,7 +77,7 @@ public class StudentEnrollmentSummary extends HttpServlet {
 
             course = courseService.addStudentInCourse(studentUsername, courseId);
             context.setVariable("course", course);
-            gradeService.save(grade,studentService.searchByUsername(studentUsername),course);
+            gradeService.save(grade,studentService.searchByUsername(studentUsername),course, LocalDateTime.now());
             context.setVariable("grades", courseService.getStudentsGrades(courseId));
 //            request.getSession().removeAttribute("selectedCourse");
             springTemplateEngine.process("studentsInCourse", context, response.getWriter());

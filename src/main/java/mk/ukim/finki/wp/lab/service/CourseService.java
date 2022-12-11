@@ -1,6 +1,7 @@
 package mk.ukim.finki.wp.lab.service;
 
 import mk.ukim.finki.wp.lab.model.Course;
+import mk.ukim.finki.wp.lab.model.Grade;
 import mk.ukim.finki.wp.lab.model.Student;
 import mk.ukim.finki.wp.lab.model.Teacher;
 
@@ -21,5 +22,5 @@ public interface CourseService{
 
     List<Course> listAllSorted();
     Map.Entry<Teacher,Integer> getBestTeacher();
-    List<Character> getStudentsGrades(Long courseId);
+    List<Grade> getStudentsGrades(Long courseId);
 }

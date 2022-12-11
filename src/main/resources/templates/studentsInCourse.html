@@ -23,7 +23,8 @@
     </div>
     <div th:text="${course.getName()}"></div>
     <ul th:each="student,iterStat : ${course.getStudents()}">
-        <li><span th:text="${student.getName()}"></span> (<span th:text="${student.getUsername()}"></span>) - Grade <span th:text="${grades.get(iterStat.index)}"></span></li>
+        <li><span th:text="${student.getName()}"></span> (<span th:text="${student.getUsername()}"></span>) - Grade <span th:text="${grades.get(iterStat.index).getGrade()}"></span>
+            , graded at <span th:text="${#temporals.format(grades.get(iterStat.index).getTimestamp(), 'dd-MM-yyyy HH:mm:ss')}"></span> </li>
     </ul>
     <a href="/courses">Back</a>
 </section>

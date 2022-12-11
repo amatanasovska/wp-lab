@@ -136,7 +136,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Character> getStudentsGrades(Long courseId) {
+    public List<Grade> getStudentsGrades(Long courseId) {
         Course course = findById(courseId);
         List<Student> students = course.getStudents();
         return students.stream().map(x->gradeService.findStudentGradeInCourse(x,course)).collect(Collectors.toList());

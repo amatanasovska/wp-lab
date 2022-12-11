@@ -20,7 +20,7 @@
             th:selected="${course!=null && course.getTeacher()!=null?
             teacher.getId().equals(course.getTeacher().getId()):
             teacher.getId().equals(teachers.stream().findFirst().get().getId())}">
-        <span th:text="${teacher.getName()}"></span>
+        <span th:text="${teacher.getFullName().getName()}"></span>
     </option>
     <option th:selected="${course==null || course.getTeacher()==null?true:false}" th:value="-1">No teacher</option>
 

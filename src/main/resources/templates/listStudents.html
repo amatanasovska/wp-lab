@@ -42,6 +42,8 @@
     <div>
         <label for="grade">Enter grade</label>
         <input type="text" maxlength="1" id="grade" name="grade" >
+        <label for="grade">Enter grading date</label>
+        <input type="datetime-local" id="grading-date" name="grading_date"/>
     </div>
     <input type="submit" value="Submit">
         <div th:if="${hasError}" th:text="${error}">

@@ -16,20 +16,20 @@ public class DataHolder {
     public static List<Course> courses = new ArrayList<>();
     public static List<Student> studentList = new ArrayList<>();
     public static List<Teacher> teachers = new ArrayList<>();
-    @PostConstruct
-    public void init()
-    {
-
-        for (int i = 1; i <=5 ; i++) {
-            studentList.add(new Student("student"+i,"student",
-                    "Student name " + i,"Surname"+i));
-        }
-        for (long i = 1L; i <=5 ; i++) {
-            teachers.add(new Teacher("Teacher"+i,"Teacher Surname "+ i));
-        }
-        for (long i = 1L; i <=5 ; i++) {
-            courses.add(new Course("Course"+i,"course description "+ i, new ArrayList<>(),null));
-        }
-    }
+//    @PostConstruct
+//    public void init()
+//    {
+//
+//        for (int i = 1; i <=5 ; i++) {
+//            studentList.add(new Student("student"+i,"student",
+//                    "Student name " + i,"Surname"+i));
+//        }
+//        for (long i = 1L; i <=5 ; i++) {
+//            teachers.add(new Teacher("Teacher"+i,"Teacher Surname "+ i));
+//        }
+//        for (long i = 1L; i <=5 ; i++) {
+//            courses.add(new Course("Course"+i,"course description "+ i, new ArrayList<>(),null));
+//        }
+//    }
 
 }

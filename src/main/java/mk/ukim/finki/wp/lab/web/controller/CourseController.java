@@ -30,7 +30,7 @@ public class CourseController {
     {
         model.addAttribute("courses",courseService.listAllSorted());
         if(courseService.getBestTeacher()!=null) {
-            model.addAttribute("bestTeacher", courseService.getBestTeacher().getKey().getName());
+            model.addAttribute("bestTeacher", courseService.getBestTeacher().getKey().getFullName().getName());
             model.addAttribute("bestTeacherClasses", courseService.getBestTeacher().getValue());
         }
         if(error!=null)

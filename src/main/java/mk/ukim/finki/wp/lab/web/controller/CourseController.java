@@ -2,17 +2,22 @@ package mk.ukim.finki.wp.lab.web.controller;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Teacher;
+import mk.ukim.finki.wp.lab.model.enumerations.Type;
 import mk.ukim.finki.wp.lab.model.exceptions.*;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.TeacherService;
 import org.apache.xpath.operations.Mod;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 @Controller
@@ -49,11 +54,11 @@ public class CourseController {
     public String saveCourse(@RequestParam(required = false) Long courseId,
                              @RequestParam String name,
                              @RequestParam String description,
-                             @RequestParam Long id,@RequestParam(required = false) String error, Model model)
+                             @RequestParam Long id,@RequestParam(required = false) String error, @RequestParam String course_type, Model model)
     {
 
         try{
-            courseService.saveCourse(courseId,name,description,id);
+            courseService.saveCourse(courseId,name,description,id,course_type);
             System.out.println("Saved");
             return "redirect:/courses";
         }
@@ -61,7 +66,7 @@ public class CourseController {
         {
             return "redirect:/courses/edit-form/"+courseId+"?error="+exception.getMessage();
         }
-        catch (CourseAddingErrorNameExists | EmptyFieldsException exception)
+        catch (CourseAddingErrorNameExists | EmptyFieldsException | CourseTypeNotFound exception)
         {
             return "redirect:/courses/add-form?error=" + exception.getMessage();
         }
@@ -97,6 +102,7 @@ public class CourseController {
             List<Teacher> teacherList = teacherService.findAll();
 
             model.addAttribute("teachers", teacherList);
+            model.addAttribute("types",Type.class.getEnumConstants());
             return "add-course.html";
         }
         catch (InvalidCourseIdException exception)
@@ -118,7 +124,22 @@ public class CourseController {
             model.addAttribute("hasError",false);
         }
         model.addAttribute("teachers", teacherService.findAll());
+        model.addAttribute("types", Type.class.getEnumConstants());
 
         return "add-course.html";
     }
+    @GetMapping("/add-teacher-form")
+    public String addNewTeacher(){
+        return "add-teacher.html";
+    }
+
+    @PostMapping("/add-teacher")
+    public String saveAddedTeacher(@RequestParam String name,@RequestParam String surname,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate employment_date){
+
+        Teacher teacher = new Teacher(name,surname,employment_date);
+        teacherService.saveTeacher(teacher);
+        return "redirect:/courses";
+    }
+
+
 }

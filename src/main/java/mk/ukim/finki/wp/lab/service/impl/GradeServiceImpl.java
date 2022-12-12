@@ -8,6 +8,7 @@ import mk.ukim.finki.wp.lab.service.GradeService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -37,5 +38,19 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public void deleteAll(List<Grade> grades) {
         gradeRepository.deleteAll(grades);
+    }
+
+    @Override
+    public List<Grade> findBetweenDates(String from, String to) {
+        from = from.replace('T',' ');
+        to = to.replace('T',' ');
+        from= from.trim();
+        to = to.trim();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        LocalDateTime from_date = LocalDateTime.parse(from,formatter);
+
+        LocalDateTime to_date = LocalDateTime.parse(to,formatter);
+        return gradeRepository.findByTimestampGreaterThanEqualAndTimestampLessThanEqual(from_date, to_date);
     }
 }

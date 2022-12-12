@@ -68,7 +68,6 @@ public class StudentEnrollmentSummaryController {
     public String enrollStudent(HttpSession session, @RequestParam(required = false) String size, @RequestParam(required = false) String grade, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime grading_date , Model model)
     {
         Long courseId = Long.parseLong((String) session.getAttribute("selectedCourse"));
-        String studentUsername = size;
 
         try {
             if(grade==null || grade.isEmpty() || grading_date==null)
@@ -78,9 +77,9 @@ public class StudentEnrollmentSummaryController {
             Course course = null;
             model.addAttribute("courses",courseService.listAll());
 
-            course = courseService.addStudentInCourse(studentUsername, courseId);
+            course = courseService.addStudentInCourse(size, courseId);
             model.addAttribute("course", course);
-            gradeService.save(characterGrade,studentService.searchByUsername(studentUsername),course,grading_date);
+            gradeService.save(characterGrade,studentService.searchByUsername(size),course,grading_date);
             model.addAttribute("grades", courseService.getStudentsGrades(courseId));
 //            request.getSession().removeAttribute("selectedCourse");
             return "studentsInCourse";

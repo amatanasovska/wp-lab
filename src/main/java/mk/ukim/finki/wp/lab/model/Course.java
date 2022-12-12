@@ -19,14 +19,16 @@ public class Course implements Comparable<Course> {
     private List<Student> students;
     @ManyToOne
     private Teacher teacher;
+    @Enumerated(EnumType.STRING)
     private Type type;
 
 //    *
-    public Course(String name, String description, List<Student> students, Teacher teacher) {
+    public Course(String name, String description, List<Student> students, Teacher teacher, Type ctype) {
         this.name = name;
         this.description = description;
         this.students = students;
         this.teacher = teacher;
+        this.type = ctype;
     }
 
     public Course() {

@@ -4,6 +4,8 @@ import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Grade;
 import mk.ukim.finki.wp.lab.model.Student;
 import mk.ukim.finki.wp.lab.model.Teacher;
+import mk.ukim.finki.wp.lab.model.enumerations.Type;
+import mk.ukim.finki.wp.lab.model.exceptions.CourseTypeNotFound;
 import mk.ukim.finki.wp.lab.model.exceptions.EmptyFieldsException;
 import mk.ukim.finki.wp.lab.model.exceptions.InvalidCourseIdException;
 import mk.ukim.finki.wp.lab.model.exceptions.InvalidStudentUsernameException;
@@ -75,19 +77,32 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Optional<Course> saveCourse(Long courseId, String name, String description, Long id) {
+    public Optional<Course> saveCourse(Long courseId, String name, String description, Long id, String courseType) {
 
         Course course = courseRepository.findById(courseId).orElse(null);
         Teacher teacher = teacherRepository.findById(id).orElse(null);
+
+        Type course_type = null;
+
+        try
+        {
+            course_type = Type.valueOf(courseType);
+        }
+        catch (IllegalArgumentException exception)
+        {
+            throw new CourseTypeNotFound(courseType);
+        }
+
         if(course!=null)
         {
             course.setName(name);
             course.setDescription(description);
             course.setTeacher(teacher);
+            course.setType(course_type);
         }
         else
         {
-            course = new Course(name,description,new ArrayList<>(),teacher);
+            course = new Course(name,description,new ArrayList<>(),teacher,course_type);
         }
         return Optional.of(courseRepository.save(course));
 

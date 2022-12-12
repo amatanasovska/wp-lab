@@ -16,7 +16,7 @@ public interface CourseService{
     List<Student> studentsNotInCourse(Long courseId); // go nema vo tekstot, dopolnitelen feature
     Course findById(Long courseId);
 
-    Optional<Course> saveCourse(Long courseId, String name, String description, Long id);
+    Optional<Course> saveCourse(Long courseId, String name, String description, Long id, String courseType);
 
     void removeCourse(Long id);
 

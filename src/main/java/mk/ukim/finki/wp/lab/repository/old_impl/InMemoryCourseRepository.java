@@ -4,6 +4,7 @@ import mk.ukim.finki.wp.lab.bootstrap.DataHolder;
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
 import mk.ukim.finki.wp.lab.model.Teacher;
+import mk.ukim.finki.wp.lab.model.enumerations.Type;
 import mk.ukim.finki.wp.lab.model.exceptions.*;
 import org.springframework.stereotype.Repository;
 
@@ -56,7 +57,7 @@ public class InMemoryCourseRepository {
         return DataHolder.courses.removeIf(x-> x.getCourseId().equals(id));
 
     }
-    public Optional<Course> save(Long courseId, String name, String description, Long id)
+    public Optional<Course> save(Long courseId, String name, String description, Long id, String courseType)
     {
 
         if((name.equals("") || description.equals(""))) {
@@ -104,7 +105,7 @@ public class InMemoryCourseRepository {
         if(id!=-1)
             teacher = teacherRepository.findById(id);
 
-        Course added = new Course(name,description,studentsInCourse,teacher);
+        Course added = new Course(name,description,studentsInCourse,teacher, Type.valueOf(courseType));
         DataHolder.courses.add(added);
 
         return Optional.of(added);

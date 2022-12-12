@@ -5,5 +5,6 @@ import mk.ukim.finki.wp.lab.model.Teacher;
 import java.util.List;
 
 public interface TeacherService {
-    public List<Teacher> findAll();
+    List<Teacher> findAll();
+    void saveTeacher(Teacher teacher);
 }

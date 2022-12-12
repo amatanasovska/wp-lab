@@ -25,6 +25,14 @@
     <option th:selected="${course==null || course.getTeacher()==null?true:false}" th:value="-1">No teacher</option>
 
 </select>
+    <select name="course_type">
+        <option th:each="type: ${types}" th:value="${type.toString()}" th:text="${type.toString()}" th:selected="${course!=null && course.getType()!=null?
+            course.getType().toString().equals(type.toString()):
+            type.equals(types[0])}">
+<!--            <span th:text="${type.toString()}"></span>-->
+
+        </option>
+    </select>
     <input type="hidden" name="courseId" th:value="${course!=null? course.getCourseId() : -1}">
     <input type="submit" value="Submit">
 </form>

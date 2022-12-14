@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/courses")
@@ -34,9 +35,12 @@ public class CourseController {
     public String getCoursesPage(@RequestParam(required = false) String error, Model model)
     {
         model.addAttribute("courses",courseService.listAllSorted());
-        if(courseService.getBestTeacher()!=null) {
-            model.addAttribute("bestTeacher", courseService.getBestTeacher().getKey().getFullName().getName());
-            model.addAttribute("bestTeacherClasses", courseService.getBestTeacher().getValue());
+        Map.Entry<Teacher, Integer> bestTeacher = courseService.getBestTeacher();
+        if(bestTeacher!=null) {
+            if(bestTeacher.getKey()!=null && bestTeacher.getValue()!=null) {
+                model.addAttribute("bestTeacher", bestTeacher.getKey().getFullName().getName());
+                model.addAttribute("bestTeacherClasses", bestTeacher.getValue());
+            }
         }
         if(error!=null)
         {
@@ -73,6 +77,7 @@ public class CourseController {
 
 
     }
+
     @DeleteMapping("/delete/{id}")
     public Object deleteCourse(@PathVariable Long id)
     {

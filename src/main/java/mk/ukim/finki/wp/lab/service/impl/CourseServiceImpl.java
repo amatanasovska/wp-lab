@@ -16,6 +16,7 @@ import mk.ukim.finki.wp.lab.service.GradeService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -113,6 +114,7 @@ public class CourseServiceImpl implements CourseService {
 //        throw new InvalidCourseIdException();
     }
 
+    @Transactional
     @Override
     public void removeCourse(Long id) {
         Course course = courseRepository.findById(id).orElseThrow(InvalidCourseIdException::new);
@@ -124,10 +126,13 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.delete(course);
     }
 
+    @Transactional
     @Override
     public List<Course> listAllSorted() {
         return listAll().stream().sorted().collect(Collectors.toList());
     }
+
+
 
     @Override
     public Map.Entry<Teacher,Integer> getBestTeacher() {

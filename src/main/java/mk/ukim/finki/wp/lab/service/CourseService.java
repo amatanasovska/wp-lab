@@ -23,4 +23,5 @@ public interface CourseService{
     List<Course> listAllSorted();
     Map.Entry<Teacher,Integer> getBestTeacher();
     List<Grade> getStudentsGrades(Long courseId);
+
 }

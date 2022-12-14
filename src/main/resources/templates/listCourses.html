@@ -18,7 +18,7 @@
 <header>
     <h1>Courses List</h1>
 </header>
-    <div>Best teacher: <span th:text="${bestTeacher!=null?bestTeacher+'('+bestTeacherClasses+')':'No teacher'}"></span></div>
+    <div>Best teacher: <span th:text="${bestTeacher!=null?bestTeacher+'('+bestTeacherClasses+')':'No teacher'}" id="bestTeacher"></span></div>
 <main>
     <div class="text-bg-danger" th:if='${hasError}' th:text="${error}">
 
@@ -40,13 +40,13 @@
     <form  th:action="@{/addStudent}" method="post" >
 
         <table>
-            <tr th:each="course: ${courses}">
+            <tr th:each="course: ${courses}" th:id="'course' + ${course.getCourseId()}" >
                 <td>
                     <input type="radio" name="courseId" th:value="${course.getCourseId()}">
                     <span th:text="${course.getName()}"></span>
                 </td>
                 <td>
-                    <a class="btn btn-primary" th:href="@{'/courses/edit-form/{id}' (id=${course.getCourseId()})}"> Edit </a>
+                    <a class="btn btn-primary" th:href="@{'/courses/edit-form/{id}' (id=${course.getCourseId()})}" > Edit </a>
 <!--                    <form th:method="delete" th:action="@{'/courses/delete/{id}' (id=${course.getCourseId()})}">-->
                         <input type="submit" class="btn btn-sm btn-danger" value="Delete" th:onclick="'javascript:deleteCourse(' + ${course.getCourseId()} + ')'">
 <!--                        <input type="submit" class="btn btn-sm btn-danger" value="Delete">-->
@@ -78,18 +78,53 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 <script>
-    function deleteCourse(id) {
+    function delay(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+
+    async function deleteCourse(id) {
+
+        var row_course = document.getElementById("course"+id)
+        row_course.remove();
+
+        await this.deleteProcedure(id);
+
+        await fetch('/courses-rest/best-teacher', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        }).then(function (response) {
+            // When the page is loaded convert it to text
+            // window.location.reload();
+            return response.json()
+
+        }).then( function (result)
+        {
+            if (result['teacher']['name'] !== undefined)
+            {
+                document.getElementById("bestTeacher").innerText = result['teacher']['name'] + " (" + result['count'] + ")"
+            }
+            else
+            {
+                document.getElementById("bestTeacher").innerText = "No teacher"
+            }
+        })
+
+    }
+    function deleteProcedure(id) {
+
         fetch('/courses/delete/' + id,  {
             method: 'DELETE'
         }).then(
             function (response)
             {
-                return response
+                return response;
             }
-        ) .then(function(response) {
-            // When the page is loaded convert it to text
-            window.location.reload();
-        })
+        )
+        //     .then(function(response) {
+        //     // When the page is loaded convert it to text
+        // })
 
     }
     function showGrades(){

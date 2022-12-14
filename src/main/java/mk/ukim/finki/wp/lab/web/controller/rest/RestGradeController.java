@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.lab.web.controller;
+package mk.ukim.finki.wp.lab.web.controller.rest;
 
 import mk.ukim.finki.wp.lab.model.Grade;
 import mk.ukim.finki.wp.lab.service.GradeService;

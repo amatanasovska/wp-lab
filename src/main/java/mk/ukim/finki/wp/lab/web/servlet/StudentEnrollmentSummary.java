@@ -43,6 +43,8 @@ public class StudentEnrollmentSummary extends HttpServlet {
         }
 
         WebContext context = new WebContext(request, response, request.getServletContext());
+        response.setContentType("application/xhtml+xml");
+
         try {
             Course course = courseService.findById(courseId);
             context.setVariable("course", course);
@@ -65,6 +67,7 @@ public class StudentEnrollmentSummary extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long courseId = Long.parseLong((String) request.getSession().getAttribute("selectedCourse"));
         String studentUsername = request.getParameter("size");
+        response.setContentType("application/xhtml+xml");
 
         try {
             if(request.getParameter("grade")==null || request.getParameter("grade").isEmpty())

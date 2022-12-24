@@ -1,6 +1,7 @@
 package mk.ukim.finki.wp.lab.web.servlet;
 
 import mk.ukim.finki.wp.lab.service.StudentService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
@@ -17,14 +18,16 @@ public class CreateStudentServlet extends HttpServlet {
         this.studentService = studentService;
         this.springTemplateEngine = springTemplateEngine;
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         WebContext context = new WebContext(request, response,request.getServletContext());
 //        context.setVariable("error",false);
+        response.setContentType("application/xhtml+xml");
+
         springTemplateEngine.process("newStudent",context,response.getWriter());
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
@@ -32,6 +35,8 @@ public class CreateStudentServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         WebContext context = new WebContext(request, response,request.getServletContext());
+        response.setContentType("application/xhtml+xml");
+
         try{
             studentService.save(username, password, name, surname);
             response.sendRedirect("/addStudent");

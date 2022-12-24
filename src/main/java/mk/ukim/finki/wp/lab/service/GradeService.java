@@ -15,4 +15,5 @@ public interface GradeService {
     List<Grade> findAll();
     void deleteAll(List<Grade> grades);
     List<Grade> findBetweenDates(String from, String to);
+    List<Grade> findBetweenGrades(Character from,Character to);
 }

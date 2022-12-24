@@ -9,6 +9,7 @@ import mk.ukim.finki.wp.lab.service.TeacherService;
 import org.apache.xpath.operations.Mod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,7 @@ public class CourseController {
         }
         return "listCourses";
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public String saveCourse(@RequestParam(required = false) Long courseId,
                              @RequestParam String name,
@@ -77,7 +79,7 @@ public class CourseController {
 
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public Object deleteCourse(@PathVariable Long id)
     {
@@ -88,7 +90,7 @@ public class CourseController {
         return rv;
 //        return "redirect:/courses";
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/edit-form/{id}")
     public String getEditCoursePage(@PathVariable Long id,@RequestParam(required = false) String error, Model model)
     {
@@ -116,6 +118,7 @@ public class CourseController {
         }
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/add-form")
     public String addNewCourse(Model model,@RequestParam(required = false) String error)
     {
@@ -133,11 +136,14 @@ public class CourseController {
 
         return "add-course.html";
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/add-teacher-form")
     public String addNewTeacher(){
         return "add-teacher.html";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add-teacher")
     public String saveAddedTeacher(@RequestParam String name,@RequestParam String surname,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate employment_date){
 

@@ -42,15 +42,36 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public List<Grade> findBetweenDates(String from, String to) {
-        from = from.replace('T',' ');
-        to = to.replace('T',' ');
-        from= from.trim();
-        to = to.trim();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime from_date = null;
+        LocalDateTime to_date = null;
+        if(!from.equals("all"))
+        {
+            from = from.replace('T',' ');
+            from= from.trim();
+            from_date = LocalDateTime.parse(from,formatter);
 
-        LocalDateTime from_date = LocalDateTime.parse(from,formatter);
+        }
+        else
+        {
+            from_date = LocalDateTime.of(1990,12,12,20,12);
+        }
+        if(!to.equals("all"))
+        {
+        to = to.replace('T',' ');
 
-        LocalDateTime to_date = LocalDateTime.parse(to,formatter);
+        to = to.trim();
+        to_date = LocalDateTime.parse(to,formatter);
+        }
+        else
+        {
+            to_date = LocalDateTime.now();
+        }
         return gradeRepository.findByTimestampGreaterThanEqualAndTimestampLessThanEqual(from_date, to_date);
+    }
+
+    @Override
+    public List<Grade> findBetweenGrades(Character from, Character to) {
+        return gradeRepository.findByGradeGreaterThanEqualAndGradeLessThanEqual(from,to);
     }
 }

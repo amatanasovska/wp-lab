@@ -27,6 +27,8 @@ public class ListStudentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         Long courseId = Long.parseLong((String) request.getSession().getAttribute("selectedCourse"));
+        response.setContentType("application/xhtml+xml");
+
         try
         {
             Course course = courseService.findById(courseId);

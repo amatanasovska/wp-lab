@@ -34,6 +34,8 @@ public class CoursesListServlet extends HttpServlet {
             context.setVariable("hasError",false);
 
         }
+        response.setContentType("application/xhtml+xml");
+
         springTemplateEngine.process("listCourses.html",context,response.getWriter());
 
     }

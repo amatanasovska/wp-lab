@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8"/>
     <title>Add new Student to Course</title>
     <style type = "text/css">
         body {
@@ -33,22 +33,28 @@
 </header>
 <section>
     <h2>Select the student to enroll:</h2>
-    <a href='/createStudent' type='button'>Create New Student</a> <br/> <br/>
+
+    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+        <a href='/createStudent' type='button'>Create New Student</a> <br/> <br/>
+    </th:block>
+
     <form action="/StudentEnrollmentSummary" method="post">
-    <div th:each="student: ${students}">
-        <input type="radio" name="size" th:value="${student.getUsername()}"> <span th:text="${student.getName()}"></span>
-    </div>
-    <br/>
-    <div>
-        <label for="grade">Enter grade</label>
-        <input type="text" maxlength="1" id="grade" name="grade" >
-        <label for="grade">Enter grading date</label>
-        <input type="datetime-local" id="grading-date" name="grading_date"/>
-    </div>
-    <input type="submit" value="Submit">
+
+        <div th:each="student: ${students}">
+            <input type="radio" name="size" th:value="${student.getUsername()}"/> <span th:text="${student.getName()}"></span>
+        </div>
+        <br/>
+        <div>
+            <label for="grade">Enter grade</label>
+            <input type="text" maxlength="1" id="grade" name="grade" />
+            <label for="grade">Enter grading date</label>
+            <input type="datetime-local" id="grading-date" name="grading_date"/>
+        </div>
+        <input type="submit" value="Submit"/>
         <div th:if="${hasError}" th:text="${error}">
 
         </div>
+
     </form>
 </section>
 <aside>

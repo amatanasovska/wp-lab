@@ -13,4 +13,5 @@ import java.util.List;
 public interface GradeRepository extends JpaRepository<Grade,Long> {
     Grade findGradeByStudentAndCourse(Student student, Course course);
     List<Grade> findByTimestampGreaterThanEqualAndTimestampLessThanEqual(LocalDateTime startDate, LocalDateTime endDate);
+    List<Grade> findByGradeGreaterThanEqualAndGradeLessThanEqual(Character grade1, Character grade2);
 }

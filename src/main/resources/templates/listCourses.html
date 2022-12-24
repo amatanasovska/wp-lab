@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">-->
 
     <meta charset="utf-8">
     <title>Welcome and Choose a Course</title>
@@ -11,6 +11,7 @@
             margin: auto;
         }
     </style>
+    <script src="../static/js/src/courses.js"></script>
 </head>
 <body>
 <div xmlns:th="http://www.thymeleaf.org">
@@ -18,24 +19,11 @@
 <header>
     <h1>Courses List</h1>
 </header>
-    <div>Best teacher: <span th:text="${bestTeacher!=null?bestTeacher+'('+bestTeacherClasses+')':'No teacher'}" id="bestTeacher"></span></div>
 <main>
     <div class="text-bg-danger" th:if='${hasError}' th:text="${error}">
 
     </div>
     <h2>Choose course:</h2>
-<!--    <input type="radio" name="courseId" value="1"> Веб програмирање<br/>-->
-<!--    <input type="radio" name="courseId" value="2"> Оперативни системи<br/>-->
-<!--    <input type="radio" name="courseId" value="3"> Електронска и мобилна трговија<br/>-->
-<!--    <input type="radio" name="courseId" value="4"> Компјутерски мрежи<br/>-->
-
-<!--    WAY 1-->
-<!--        <input type="radio" name="courseId" value="1"> Course1<br/>-->
-<!--        <input type="radio" name="courseId" value="2"> Course2<br/>-->
-<!--        <input type="radio" name="courseId" value="3"> Course3<br/>-->
-<!--        <input type="radio" name="courseId" value="4"> Course4<br/>-->
-<!--    <input type="radio" name="courseId" value="5"> Course5<br/>-->
-<!--    WAY 2-->
     <br/>
     <form  th:action="@{/addStudent}" method="post" >
 
@@ -46,21 +34,20 @@
                     <span th:text="${course.getName()}"></span>
                 </td>
                 <td>
-                    <a class="btn btn-primary" th:href="@{'/courses/edit-form/{id}' (id=${course.getCourseId()})}" > Edit </a>
-<!--                    <form th:method="delete" th:action="@{'/courses/delete/{id}' (id=${course.getCourseId()})}">-->
-                        <input type="submit" class="btn btn-sm btn-danger" value="Delete" th:onclick="'javascript:deleteCourse(' + ${course.getCourseId()} + ')'">
-<!--                        <input type="submit" class="btn btn-sm btn-danger" value="Delete">-->
-
-<!--                    </form>-->
+                    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a class="btn btn-primary editBtn" th:href="@{'/courses/edit-form/{id}' (id=${course.getCourseId()})}" > Edit </a>
+                        <input type="submit" class="btn btn-sm btn-danger deleteBtn" value="Delete" th:onclick="'javascript:deleteCourse(' + ${course.getCourseId()} + ')'">
+                    </th:block>
 
                 </td>
             </tr>
         </table>
         <input type="submit" value="Submit">
     </form>
-    <a class="btn btn-secondary" th:href="@{'/courses/add-form'}"> Add new course</a>
-    <a class="btn btn-secondary" th:href="@{'/courses/add-teacher-form'}"> Add new teacher</a>
-
+    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+        <a class="btn btn-secondary" th:href="@{'/courses/add-form'}" id="addNewCourse"> Add new course</a>
+        <a class="btn btn-secondary" th:href="@{'/courses/add-teacher-form'}"> Add new teacher</a>
+    </th:block>
         <div>
             Show grades
         </div>
@@ -68,6 +55,10 @@
         <input type="datetime-local" placeholder="yyyy-MM-dd'T'HH:mm:ss" id="from" name="from">
         <label for="to">To: </label>
         <input type="datetime-local" placeholder="yyyy-MM-dd'T'HH:mm:ss" id="to" name="to">
+        <label for="from-grade">From grade: </label>
+        <input type="text" maxlength="1" id="from-grade" name="from_grade">
+        <label for="to-grade">To grade: </label>
+        <input type="text" maxlength="1" id="to-grade" name="to_grade">
         <a th:onclick="'javascript:showGrades()'">Show</a>
         <ol id="result">
 
@@ -76,85 +67,6 @@
 </main>
 </div>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-<script>
-    function delay(time) {
-        return new Promise(resolve => setTimeout(resolve, time));
-    }
-
-    async function deleteCourse(id) {
-
-        var row_course = document.getElementById("course"+id)
-        row_course.remove();
-
-        await this.deleteProcedure(id);
-
-        await fetch('/courses-rest/best-teacher', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-            },
-        }).then(function (response) {
-            // When the page is loaded convert it to text
-            // window.location.reload();
-            return response.json()
-
-        }).then( function (result)
-        {
-            if (result['teacher']['name'] !== undefined)
-            {
-                document.getElementById("bestTeacher").innerText = result['teacher']['name'] + " (" + result['count'] + ")"
-            }
-            else
-            {
-                document.getElementById("bestTeacher").innerText = "No teacher"
-            }
-        })
-
-    }
-    function deleteProcedure(id) {
-
-        fetch('/courses/delete/' + id,  {
-            method: 'DELETE'
-        }).then(
-            function (response)
-            {
-                return response;
-            }
-        )
-        //     .then(function(response) {
-        //     // When the page is loaded convert it to text
-        // })
-
-    }
-    function showGrades(){
-        var result_ol = document.getElementById("result")
-        result_ol.innerText=""
-        var from_date = document.getElementById("from").value;
-        var to_date = document.getElementById("to").value;
-        console.log(from_date)
-        console.log(to_date)
-        fetch('/grades/range?from=' + from_date + '&to=' + to_date,  {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-            },
-        }).then(function (response) {
-            // When the page is loaded convert it to text
-            // window.location.reload();
-            return response.json()
-
-        }).then( function (result)
-        {
-            for (var key in result){
-                var node = document.createElement('li');
-                node.appendChild(document.createTextNode(result[key]['student']['username'] + " - "
-                    + result[key]['grade'] + " - Course : " + result[key]['course']['name']));
-
-                result_ol.appendChild(node);
-            }
-        })
-    }
-
-</script>
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>-->
+<script src="/js/src/courses.js"></script>
 </html>
